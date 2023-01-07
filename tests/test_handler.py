@@ -1,78 +1,28 @@
-from unittest import TestCase, mock
-from src.handler import Handler
-from os import environ
-from sys import stdin
-from json import dumps
-from io import StringIO
-from typing import Tuple, List, Union, Dict
+from unittest import TestCase
+from random import randint
 
-from src import handler
-
-
-class MyHandler(Handler):
-    def get(self, query: Dict[str, Union[str, List[str]]], headers: Dict[str, str]) -> Tuple[str, Dict[str, str], str]:
-        return ('200 OK', {'Content-Type': 'application/json'}, dumps(query))
-    
-    def post(self, query: Dict[str, Union[str, List[str]]], headers: Dict[str, str], body: str) -> Tuple[str, Dict[str, str], str]:
-        return ('200 OK', {'Content-Type': 'application/json'}, body)
-
-QUERY_STRING = 'hello=world&test=123'
-BODY = dumps({'foo': 'bar'})
-GET_ENV = {
-    'REQUEST_METHOD': 'GET',
-    'QUERY_STRING': QUERY_STRING
-}
-
-POST_ENV_JSON = {
-    'REQUEST_METHOD': 'POST',
-    'QUERY_STRING': QUERY_STRING,
-    'CONTENT_LENGTH': str(len(BODY)),
-    'CONTENT_TYPE': 'application/json'
-}
+from src.cgiw.handler import handle
 
 class TestHandler(TestCase):
-    handler = MyHandler(verbose=False)
+    def test_handle_get(self):
+        data = str(randint(111, 99999))
 
-    @mock.patch.dict(environ, GET_ENV)
-    def test_run_get(self):
-        response = self.handler.run()
-        self.assertEqual(response, f"Status: 200 OK\nContent-Type: application/json\n\n{dumps({'hello': 'world', 'test': '123'})}")
+        method = 'GET'
+        query = {'data': [data]}
 
-    @mock.patch.dict(environ, POST_ENV_JSON)
-    def test_run_post_json(self):
-        handler.stdin = StringIO(BODY)
-        response = self.handler.run()
-        self.assertEqual(response, f"Status: 200 OK\nContent-Type: application/json\n\n{BODY}")
+        def handler(query, headers):
+            return ('200 OK', {'Content-Type': 'text/plain'}, query['data'][0])
 
-    @mock.patch.dict(environ, GET_ENV)
-    def test_parse_query(self):
-        result = self.handler.parse_query()
-        self.assertEqual(result, {
-            'hello': 'world',
-            'test': '123'
-        })
+        result = handle(method, query, {}, get=handler)
+        self.assertEqual(result, ('200 OK', {'Content-Type': 'text/plain'}, data))
 
-    @mock.patch.dict(environ, POST_ENV_JSON)
-    def test_parse_headers(self):
-        result = self.handler.parse_headers()
-        self.assertEqual(result, {
-            'Content-Length': 14,
-            'Content-Type': 'application/json'
-        })
+    def test_handle_post(self):
+        data = str(randint(111, 99999))
 
-    def test_parse_body(self):
-        handler.stdin = StringIO(BODY)
-        result = self.handler.parse_body({'Content-Length': 14})
-        self.assertEqual(result, BODY)
+        method = 'POST'
+        
+        def handler(query, headers, body):
+            return ('200 OK', {'Content-Type': 'text/plain'}, body)
 
-    def test_handle(self):
-        headers = {
-            'Content-Type': 'application/json',
-            'Content-Length': 14
-        }
-        result = self.handler.handle('POST', headers, {}, BODY)
-        self.assertEqual(result, ('200 OK', {'Content-Type': 'application/json'}, BODY))
-
-    def test_compose_response(self):
-        result = self.handler.compose_response('200 OK', {'Content-Type': 'text/plain'}, 'hello')
-        self.assertEqual(result, "Status: 200 OK\nContent-Type: text/plain\n\nhello")
+        result = handle(method, {}, {}, body=data, post=handler)
+        self.assertEqual(result, ('200 OK', {'Content-Type': 'text/plain'}, data))
