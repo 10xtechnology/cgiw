@@ -7,7 +7,7 @@ from .handler import handle
 from .composers import compose_response
 
 
-def run(get: Optional[GetHandlerType] = None, post: Optional[PostHandlerType] = None, verbose=True):
+def run(get: Optional[GetHandlerType] = None, post: Optional[PostHandlerType] = None, verbose: bool = True):
     method = getenv('REQUEST_METHOD', '')
     query = parse_query()
     headers = parse_headers()

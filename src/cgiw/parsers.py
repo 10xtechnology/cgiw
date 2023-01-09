@@ -1,22 +1,45 @@
-from os import getenv 
+from os import getenv, environ
 from sys import stdin
 from urllib.parse import parse_qs
+from json import loads
 
 from .schemas import QueryType, HeadersType
 
+
+CONTENT_TYPE_PARSER_MAP = {
+    'application/json': loads,
+    'application/x-www-form-urlencoded': parse_qs,
+    'multipart/form-data': parse_qs
+}
 
 def parse_query() -> QueryType:
     return parse_qs(getenv('QUERY_STRING'))
 
 
 def parse_headers() -> HeadersType:
+    def format_key(k: str):
+        return '-'.join([p.capitalize() for p in k.split('_')][1:])
+
     return {
         'Content-Type': getenv('CONTENT_TYPE', ''),
-        'Content-Length': getenv('CONTENT_LENGTH', '')
+        'Content-Length': getenv('CONTENT_LENGTH', ''),
+        **{format_key(k): v for k, v in environ.items() if k.startswith('HTTP_')}
     }
 
 
 def parse_body(headers: HeadersType) -> str:
-    if length := int(headers.get('Content-Length') or 0):
-        return stdin.read(length)
-    return ''
+    if not(length := int(headers.get('Content-Length') or 0)):
+        return str()
+
+    raw_data = stdin.read(length)
+
+    if not all([
+        content_type := headers.get('Content-Type'),
+        parser := CONTENT_TYPE_PARSER_MAP.get(content_type)
+    ]):
+        return raw_data
+    
+    return parser(raw_data)
+
+    
+    
