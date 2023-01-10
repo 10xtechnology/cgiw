@@ -2,11 +2,12 @@ from os import getenv, environ
 from sys import stdin
 from urllib.parse import parse_qs
 from json import loads
+from typing import Dict, Callable, Any
 
 from .schemas import QueryType, HeadersType
 
 
-CONTENT_TYPE_PARSER_MAP = {
+CONTENT_TYPE_PARSER_MAP: Dict[str, Callable[[str], Any]] = {
     'application/json': loads,
     'application/x-www-form-urlencoded': parse_qs,
     'multipart/form-data': parse_qs
@@ -33,10 +34,10 @@ def parse_body(headers: HeadersType) -> str:
 
     raw_data = stdin.read(length)
 
-    if not all([
-        content_type := headers.get('Content-Type'),
-        parser := CONTENT_TYPE_PARSER_MAP.get(content_type)
-    ]):
+    if not (content_type := headers.get('Content-Type')):
+        return raw_data
+
+    if not (parser := CONTENT_TYPE_PARSER_MAP.get(content_type)):
         return raw_data
     
     return parser(raw_data)
