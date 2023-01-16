@@ -1,7 +1,7 @@
 from json import dumps
 from typing import Optional, Union, Tuple, Dict
 
-from .schemas import JsonType, ReturnType
+from .types import JsonType, ReturnType
 
 
 def json(obj: JsonType) -> ReturnType:

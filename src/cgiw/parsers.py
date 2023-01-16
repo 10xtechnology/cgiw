@@ -4,7 +4,7 @@ from urllib.parse import parse_qs
 from json import loads
 from typing import Dict, Callable, Any
 
-from .schemas import QueryType, HeadersType
+from .types import QueryType, HeadersType
 
 
 CONTENT_TYPE_PARSER_MAP: Dict[str, Callable[[str], Any]] = {

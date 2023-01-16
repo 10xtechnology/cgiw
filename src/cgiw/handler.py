@@ -1,6 +1,6 @@
 from typing import Optional, Any
 
-from .schemas import QueryType, HeadersType, GetHandlerType, PostHandlerType, ReturnType
+from .types import QueryType, HeadersType, GetHandlerType, PostHandlerType, ReturnType
 
 
 def handle(method: str, query: QueryType, headers: HeadersType, body: Optional[Any] = None, get: Optional[GetHandlerType] = None, post: Optional[PostHandlerType] = None) -> ReturnType:

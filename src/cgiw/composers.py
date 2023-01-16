@@ -1,6 +1,6 @@
 from typing import Any
 
-from .schemas import HeadersType
+from .types import HeadersType
 
 def compose_response(status: str, headers: HeadersType, body: Any) -> str:
     formatted_headers = '\n'.join([f"{k}: {v}" for k, v in headers.items()])

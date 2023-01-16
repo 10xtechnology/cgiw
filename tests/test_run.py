@@ -1,7 +1,7 @@
 from unittest import TestCase, mock
 from os import environ
 
-from src.cgiw import run
+from src.cgiw.run import run
 
 class TestRun(TestCase):
     @mock.patch.dict(environ, {

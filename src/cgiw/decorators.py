@@ -1,6 +1,6 @@
 from typing import Any, Callable
 
-from .schemas import PostHandlerType, BodyParserType, QueryType, HeadersType, ReturnType
+from .types import PostHandlerType, BodyParserType, QueryType, HeadersType, ReturnType
 
 
 def body_parser(parser: BodyParserType) -> Callable[[PostHandlerType], PostHandlerType]:
