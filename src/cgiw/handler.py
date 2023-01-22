@@ -8,4 +8,4 @@ def handle(method: str, query: QueryType, headers: HeadersType, body: Optional[A
         return post(query, headers, body)
     elif method == 'GET' and get:
         return get(query, headers)
-    return ('405 Method Not Allowed', {}, '')
+    return ({'Status': '405 Method Not Allowed'}, '')

@@ -9,17 +9,17 @@ class TestRun(TestCase):
     })
     def test_run_get(self):
         def handler(query, headers):
-            return ('', {}, '')
+            return ({}, '')
         
         result = run(get=handler, verbose=False)
-        self.assertEqual(result, 'Status: \n\n\n')
+        self.assertEqual(result, '\n\n')
 
     @mock.patch.dict(environ, {
         'REQUEST_METHOD': 'POST'
     })
     def test_run_post(self):
         def handler(query, headers, body):
-            return ('', {}, '')
+            return ({}, '')
 
         result = run(post=handler, verbose=False)
-        self.assertEqual(result, 'Status: \n\n\n')
+        self.assertEqual(result, '\n\n')

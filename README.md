@@ -19,18 +19,23 @@ Here is an example that demonstrates the functionality of the framework.
 #!/bin/python3
 
 from cgiw import run
-from cgiw.responses import json
-from cgiw.decorators import body_parser 
+from cgiw.responses import redirect
+from cgiw.decorators import wrap_headers, wrap_body 
 
 
-def custom_parser(body):
+def process_headers(headers):
+    # do stuff
+    return headers
+
+def process_body(body):
     # do stuff
     return body
 
-@body_parser(custom_parser)
-def handler(query, headers):
+@wrap_headers(process_headers)
+@wrap_body(process_body)
+def handler(query, headers, body):
     # do stuff
-    return json({'hello': 'world'})
+    return redirect('/test', {'query': 'string'})
 
-run(get=handler)
+run(post=handler)
 ```
