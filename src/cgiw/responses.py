@@ -2,13 +2,13 @@ from json import dumps
 from typing import Optional, Union, Tuple, Dict
 from urllib.parse import urlencode
 
-from .types import JsonType, ReturnType, HeadersType
+from .types import JsonType, ReturnType, QueryType
 
 
 def json(obj: JsonType) -> ReturnType:
     return ({'Status': '200 OK','Content-Type': 'application/json'}, dumps(obj))
 
-def redirect(url: str, query: Optional[HeadersType] = None) -> ReturnType:
+def redirect(url: str, query: Optional[QueryType] = None) -> ReturnType:
     if query:
         url += f'?{urlencode(query)}'
     headers = {
