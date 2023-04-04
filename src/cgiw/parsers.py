@@ -24,6 +24,7 @@ def parse_headers() -> HeadersType:
     return {
         'Content-Type': getenv('CONTENT_TYPE', ''),
         'Content-Length': getenv('CONTENT_LENGTH', ''),
+        'Remote-User': getenv('REMOTE_USER', ''),
         **{format_key(k): v for k, v in environ.items() if k.startswith('HTTP_')}
     }
 
