@@ -2,6 +2,7 @@ from unittest import TestCase, mock
 from os import environ
 
 from src.cgiw.run import run
+from src.cgiw.exceptions import ApiException
 
 class TestRun(TestCase):
     @mock.patch.dict(environ, {
@@ -23,3 +24,16 @@ class TestRun(TestCase):
 
         result = run(post=handler, verbose=False)
         self.assertEqual(result, '\n\n')
+
+    @mock.patch.dict(environ, {
+        'REQUEST_METHOD': 'GET'
+    })
+    def test_run_exception(self):
+        code = 404 
+        status_text = 'Not Found'
+        message = 'Resource Not Found'
+        def handler(query, headers):
+            raise ApiException(code, status_text, message=message)
+        
+        result = run(get=handler, verbose=False)
+        self.assertEqual(result, f'Status: {code} {status_text}\n\n{message}')

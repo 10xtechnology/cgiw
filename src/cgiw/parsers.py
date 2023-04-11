@@ -21,12 +21,16 @@ def parse_headers() -> HeadersType:
     def format_key(k: str):
         return '-'.join([p.capitalize() for p in k.split('_')][1:])
 
-    return {
-        'Content-Type': getenv('CONTENT_TYPE', ''),
-        'Content-Length': getenv('CONTENT_LENGTH', ''),
-        'Remote-User': getenv('REMOTE_USER', ''),
-        **{format_key(k): v for k, v in environ.items() if k.startswith('HTTP_')}
-    }
+    headers = {format_key(k): v for k, v in environ.items() if k.startswith('HTTP_')}
+
+    if content_type := getenv('CONTENT_TYPE'):
+        headers['Content-Type'] = content_type
+    if content_length := getenv('CONTENT_LENGTH'):
+        headers['Content-Length'] = content_length
+    if remote_user := getenv('REMOTE_USER'):
+        headers['Remote-User'] = remote_user
+
+    return headers
 
 
 def parse_body(headers: HeadersType) -> str:
