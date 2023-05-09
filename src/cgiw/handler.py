@@ -2,6 +2,7 @@ from typing import Optional, Any
 
 from .types import QueryType, HeadersType, GetHandlerType, PostHandlerType, ReturnType
 from .exceptions import ApiException
+from .logger import log
 
 
 def handle(method: str, query: QueryType, headers: HeadersType, body: Optional[Any] = None, get: Optional[GetHandlerType] = None, post: Optional[PostHandlerType] = None) -> ReturnType:
@@ -13,6 +14,7 @@ def handle(method: str, query: QueryType, headers: HeadersType, body: Optional[A
     except ApiException as e:
         raise e
     except Exception as e:
+        log(str(e))
         raise ApiException(500, 'Internal Service Error', message='An Unknown Error Has Occurred')
 
     return ({'Status': '405 Method Not Allowed'}, '')
