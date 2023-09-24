@@ -8,10 +8,13 @@ class TestComposers(TestCase):
     def test_compose_response(self):
         body = str(randint(1111, 999999))
         headers = {
-            'Status': '200 OK',
-            'Content-Type': 'text/plain',
-            'Content-Length': len(body)
+            "Status": "200 OK",
+            "Content-Type": "text/plain",
+            "Content-Length": len(body),
         }
         result = compose_response(headers, body)
 
-        self.assertEqual(result, f"Status: 200 OK\nContent-Type: text/plain\nContent-Length: {len(body)}\n\n{body}")
+        self.assertEqual(
+            result,
+            f"Status: 200 OK\nContent-Type: text/plain\nContent-Length: {len(body)}\n\n{body}",
+        )

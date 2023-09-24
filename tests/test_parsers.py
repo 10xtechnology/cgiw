@@ -8,30 +8,19 @@ from src.cgiw import parsers
 
 
 class TestParsers(TestCase):
-    @mock.patch.dict(environ, {
-        'QUERY_STRING': 'hello=world&test=123'
-    })
+    @mock.patch.dict(environ, {"QUERY_STRING": "hello=world&test=123"})
     def test_parse_query(self):
         result = parse_query()
-        self.assertEqual(result, {
-            'hello': ['world'],
-            'test': ['123']
-        })
+        self.assertEqual(result, {"hello": ["world"], "test": ["123"]})
 
-    @mock.patch.dict(environ, {
-        'CONTENT_TYPE': 'text/plain',
-        'CONTENT_LENGTH': '11'
-    })
+    @mock.patch.dict(environ, {"CONTENT_TYPE": "text/plain", "CONTENT_LENGTH": "11"})
     def test_parse_headers(self):
         result = parse_headers()
-        self.assertEqual(result, {
-            'Content-Type': 'text/plain',
-            'Content-Length': '11'
-        })
+        self.assertEqual(result, {"Content-Type": "text/plain", "Content-Length": "11"})
 
     def test_parse_body(self):
         body = str(randint(111, 999999))
-        headers = {'Content-Length': str(len(body))}
+        headers = {"Content-Length": str(len(body))}
         parsers.stdin = StringIO(body)
         result = parse_body(headers)
         self.assertEqual(result, body)

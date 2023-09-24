@@ -8,8 +8,12 @@ from .composers import compose_response
 from .exceptions import ApiException
 
 
-def run(get: Optional[GetHandlerType] = None, post: Optional[PostHandlerType] = None, verbose: bool = True):
-    method = getenv('REQUEST_METHOD', '')
+def run(
+    get: Optional[GetHandlerType] = None,
+    post: Optional[PostHandlerType] = None,
+    verbose: bool = True,
+):
+    method = getenv("REQUEST_METHOD", "")
     query = parse_query()
     headers = parse_headers()
     body = parse_body(headers)
