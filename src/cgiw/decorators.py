@@ -1,5 +1,11 @@
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Optional, Type
 
+#  IDK WHY PY.TYPED MARKER ISNT WORKING
+
+from rtdce import enforce  # type: ignore
+
+
+from .exceptions import BadRequestException
 from .types import (
     PostHandlerType,
     BodyWrapperType,
@@ -35,3 +41,27 @@ def wrap_headers(
         return wrapper
 
     return wrap
+
+
+def create_type_validator(type_: Type):
+    def validator(data: Any):
+        if not isinstance(data, type_):
+            raise BadRequestException(f"{data} is not type {type_}")
+        return data
+
+    return validator
+
+
+def create_class_instantiator(class_: type):
+    def instantiator(data: dict):
+        return class_(**data)
+
+    return instantiator
+
+
+def enforce_dataclass(dataclass_instance):
+    try:
+        enforce(dataclass_instance)
+    except TypeError as e:
+        raise BadRequestException(message=str(e))
+    return dataclass_instance

@@ -3,7 +3,13 @@ from urllib.parse import parse_qs
 from json import loads, dumps
 from random import randint
 
-from src.cgiw.decorators import wrap_body, wrap_headers
+from src.cgiw.decorators import (
+    wrap_body,
+    wrap_headers,
+    create_type_validator,
+    create_class_instantiator,
+)
+from src.cgiw.exceptions import BadRequestException
 
 
 class TestDecorators(TestCase):
@@ -35,3 +41,17 @@ class TestDecorators(TestCase):
             return ({}, "")
 
         handler({}, {"Authorization": "eee"})
+
+    def test_create_type_validator(self):
+        validator = create_type_validator(int)
+
+        self.assertRaises(BadRequestException, validator, "test")
+
+        assert 123 == validator(123)
+
+    def test_create_class_instantiator(self):
+        class Test:
+            pass
+
+        instantiator = create_class_instantiator(Test)
+        assert isinstance(instantiator({}), Test)

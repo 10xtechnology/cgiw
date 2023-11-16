@@ -28,14 +28,14 @@ def parse_headers() -> HeadersType:
         headers["Content-Type"] = content_type
     if content_length := getenv("CONTENT_LENGTH"):
         headers["Content-Length"] = content_length
-    if remote_user := getenv("REMOTE_USER"):
-        headers["Remote-User"] = remote_user
+    if authorization := getenv("AUTHORIZATION"):
+        headers["Authorization"] = authorization
 
     return headers
 
 
 def parse_body(headers: HeadersType) -> str:
-    if not (length := int(headers.get("Content-Length") or 0)):
+    if not (length := int(headers.get("Content-Length", 0))):
         return str()
 
     raw_data = stdin.read(length)

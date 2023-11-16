@@ -2,7 +2,11 @@ from typing import Optional, Any
 from traceback import format_exc
 
 from .types import QueryType, HeadersType, GetHandlerType, PostHandlerType, ReturnType
-from .exceptions import ApiException
+from .exceptions import (
+    ApiException,
+    InternalServiceErrorException,
+    MethodNotAllowedException,
+)
 from .logger import log
 
 
@@ -23,8 +27,6 @@ def handle(
         raise e
     except Exception as e:
         log(format_exc())
-        raise ApiException(
-            500, "Internal Service Error", message="An Unknown Error Has Occurred"
-        )
+        raise InternalServiceErrorException()
 
-    return ({"Status": "405 Method Not Allowed"}, "")
+    raise MethodNotAllowedException()
